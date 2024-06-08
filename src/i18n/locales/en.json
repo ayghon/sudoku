@@ -1,0 +1,8 @@
+{
+  "language.en": "English",
+  "language.fr": "French",
+  "language.tr": "Turkish",
+  "screen.not_found.title": "Oops!",
+  "screen.not_found.description": "This screen doesn't exist.",
+  "screen.not_found.button": "Go to home screen!"
+}

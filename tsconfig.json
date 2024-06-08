@@ -1,0 +1,16 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "@components": ["src/components/index"],
+      "@utils": ["src/utils/index"],
+      "@i18n": ["src/i18n/index"],
+      "@constants": ["src/constants/index"],
+      "@ui": ["src/ui/index"],
+      "@providers": ["src/providers/index"],
+      "@types": ["src/types/index"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts", "**/*.d.ts"]
+}
