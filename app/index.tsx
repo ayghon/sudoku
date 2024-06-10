@@ -8,9 +8,7 @@ export default function Home() {
 
   // TODO redirect to board automatically if ongoing game found
 
-  const onEasy = () => replace({ params: { mode: GameMode.Easy }, pathname: '/game' });
-  const onMedium = () => replace({ params: { mode: GameMode.Medium }, pathname: '/game' });
-  const onHard = () => replace({ params: { mode: GameMode.Hard }, pathname: '/game' });
+  const onMode = (mode: GameMode) => replace({ params: { mode }, pathname: '/game' });
 
   return (
     <View
@@ -21,7 +19,7 @@ export default function Home() {
         paddingHorizontal: 20,
       }}
     >
-      <GameModeButtonGroup onEasy={onEasy} onMedium={onMedium} onHard={onHard} />
+      <GameModeButtonGroup onMode={onMode} />
     </View>
   );
 }

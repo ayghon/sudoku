@@ -8,18 +8,12 @@ type NewGameDialogProps = GameModeButtonGroupProps & {
   hideDialog: () => void;
 };
 
-export const NewGameDialog: FC<NewGameDialogProps> = ({
-  isVisible,
-  hideDialog,
-  onEasy,
-  onMedium,
-  onHard,
-}) => {
+export const NewGameDialog: FC<NewGameDialogProps> = ({ isVisible, hideDialog, onMode }) => {
   return (
     <Dialog visible={isVisible} onDismiss={hideDialog}>
       <Dialog.Title>New game</Dialog.Title>
       <Dialog.Content>
-        <GameModeButtonGroup onMedium={onMedium} onHard={onHard} onEasy={onEasy} />
+        <GameModeButtonGroup onMode={onMode} />
       </Dialog.Content>
     </Dialog>
   );

@@ -1,3 +1,4 @@
+import { useGameState } from '@providers';
 import { FC } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -5,16 +6,11 @@ import { Button } from 'react-native-paper';
 type GameControlsProps = {
   undoLastMove: () => void;
   eraseCell: () => void;
-  toggleNotesMode: () => void;
-  isNotesModeEnabled: boolean;
 };
 
-export const GameControls: FC<GameControlsProps> = ({
-  undoLastMove,
-  eraseCell,
-  toggleNotesMode,
-  isNotesModeEnabled,
-}) => {
+export const GameControls: FC<GameControlsProps> = ({ undoLastMove, eraseCell }) => {
+  const { toggleNotesMode, isNotesModeEnabled } = useGameState();
+
   return (
     <View style={[styles.row, { justifyContent: 'space-between' }]}>
       <Button icon="undo" onPress={undoLastMove} mode="elevated">

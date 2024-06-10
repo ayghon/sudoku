@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 
-// TODO handle in global store
+// TODO add pause function
 
 export const useTimer = () => {
   const [timer, setTimer] = useState<string>('00:00');

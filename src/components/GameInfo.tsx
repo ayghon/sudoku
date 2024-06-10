@@ -1,17 +1,21 @@
-import { GameMode, gameModeToText } from '@utils';
+import { useGameState } from '@providers';
+import { gameModeToText } from '@utils';
 import { FC } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { Text } from 'react-native-paper';
 
 type GameInfoProps = {
-  mode: GameMode;
   timer: string;
 };
 
-export const GameInfo: FC<GameInfoProps> = ({ mode, timer }) => {
+export const GameInfo: FC<GameInfoProps> = ({ timer }) => {
+  const { gameMode } = useGameState();
+  const gameModeText = gameModeToText[gameMode];
+
   return (
     <View style={[styles.row, { justifyContent: 'space-around' }]}>
-      <Text>{gameModeToText[mode]}</Text>
-      <Text>{timer}</Text>
+      <Text variant="bodyMedium">{gameModeText}</Text>
+      <Text variant="bodyMedium">{timer}</Text>
     </View>
   );
 };
