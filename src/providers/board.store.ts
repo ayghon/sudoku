@@ -11,6 +11,7 @@ type BoardStore = {
   getCellFilledValue: (position: Position) => number[] | number | undefined;
   isNotesModeEnabled: boolean;
   toggleNotesMode: () => void;
+  eraseCell: (position?: Position) => void;
 };
 
 const positionsAreEqual = (positionA: Position, positionB: Position) => {
@@ -18,6 +19,19 @@ const positionsAreEqual = (positionA: Position, positionB: Position) => {
 };
 
 const boardStore = createStore<BoardStore>((set, get) => ({
+  eraseCell: (position) => {
+    const selectedPoint = position ?? get().selectedCell;
+
+    if (!selectedPoint) {
+      throw new Error('Missing position');
+    }
+
+    return set({
+      filledCells: get().filledCells.filter(
+        (cell) => !positionsAreEqual(cell.position, selectedPoint),
+      ),
+    });
+  },
   fillCell: (value, note, position?: Position) => {
     const newPoint = position ?? get().selectedCell;
 

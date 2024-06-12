@@ -1,28 +1,37 @@
 import { useBoardState } from '@providers';
-import { FC } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
-type GameControlsProps = {
-  undoLastMove: () => void;
-  eraseCell: () => void;
-};
+export const GameControls = () => {
+  const { toggleNotesMode, isNotesModeEnabled, eraseCell, selectedCell, getCellFilledValue } =
+    useBoardState();
 
-export const GameControls: FC<GameControlsProps> = ({ undoLastMove, eraseCell }) => {
-  const { toggleNotesMode, isNotesModeEnabled } = useBoardState();
+  const undoLastMove = () => {};
+
+  const selectedCellValue = selectedCell ? getCellFilledValue(selectedCell) : undefined;
+  const isEraserDisabled =
+    !selectedCell ||
+    !selectedCellValue ||
+    (Array.isArray(selectedCellValue) && selectedCellValue.length === 0);
 
   return (
     <View style={[styles.row, { justifyContent: 'space-between' }]}>
-      <Button icon="undo" onPress={undoLastMove} mode="elevated">
+      <Button icon="undo" onPress={undoLastMove} mode="outlined">
         Undo
       </Button>
-      <Button icon="eraser" onPress={eraseCell} mode="elevated">
+      <Button
+        icon="eraser"
+        style={{ shadowOpacity: 0 }}
+        disabled={isEraserDisabled}
+        onPress={() => eraseCell()}
+        mode="outlined"
+      >
         Erase
       </Button>
       <Button
         icon="note"
         onPress={toggleNotesMode}
-        mode={isNotesModeEnabled ? 'contained-tonal' : 'elevated'}
+        mode={isNotesModeEnabled ? 'contained' : 'outlined'}
       >
         Notes
       </Button>

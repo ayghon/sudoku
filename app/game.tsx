@@ -35,10 +35,6 @@ export default function Game() {
     hideDialog();
   };
 
-  // CONTROLS FUNCTIONS
-  const undoLastMove = () => {};
-  const eraseCell = () => {};
-
   return (
     <>
       <View
@@ -56,7 +52,7 @@ export default function Game() {
 
         <Board />
 
-        <GameControls eraseCell={eraseCell} undoLastMove={undoLastMove} />
+        <GameControls />
 
         <Numbers />
       </View>
