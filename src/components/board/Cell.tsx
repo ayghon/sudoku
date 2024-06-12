@@ -12,16 +12,24 @@ type CellProps = {
 
 export const Cell: FC<CellProps> = ({ style, position }) => {
   const theme = useTheme();
-  const { getHighlightForPosition, selectCell, selectedCell, getCellFilledValue } = useBoardState();
+  const {
+    highlightedNumber,
+    getHighlightForPosition,
+    selectCell,
+    selectedCell,
+    getCellFilledValue,
+  } = useBoardState();
 
   const handleSelect = () => selectCell(position);
 
   const filledValue = getCellFilledValue(position);
   const hasNotes = Array.isArray(filledValue);
 
-  const isHighlighted = getHighlightForPosition(position);
+  const isCellHighlighted = getHighlightForPosition(position);
   const isSelected =
     selectedCell?.column === position.column && selectedCell.line === position.line;
+  const isNumberHighlighted =
+    !hasNotes && typeof filledValue !== 'undefined' && highlightedNumber === filledValue;
 
   return (
     <TouchableRipple
@@ -29,7 +37,8 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
       style={[
         {
           backgroundColor:
-            (isHighlighted && theme.colors.surfaceVariant) ||
+            (isNumberHighlighted && theme.colors.tertiaryContainer) ||
+            (isCellHighlighted && theme.colors.surfaceVariant) ||
             (isSelected && theme.colors.primaryContainer) ||
             undefined,
         },

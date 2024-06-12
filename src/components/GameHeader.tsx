@@ -9,8 +9,8 @@ type GameHeaderProps = {
 export const GameHeader: FC<GameHeaderProps> = ({ launchNewGame }) => {
   return (
     <View style={styles.row}>
-      <Button onPress={launchNewGame} mode="contained-tonal" labelStyle={{ fontWeight: '900' }}>
-        New game
+      <Button onPress={launchNewGame} mode="contained-tonal">
+        New
       </Button>
     </View>
   );

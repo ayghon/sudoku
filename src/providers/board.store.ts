@@ -15,6 +15,7 @@ type BoardStore = {
   eraseCell: (position?: Position) => void;
   history: (Omit<Cell, 'notes'> & { note?: number })[];
   undoLastMove: () => void;
+  highlightedNumber: number | undefined;
 };
 
 const positionsAreEqual = (positionA: Position, positionB: Position) => {
@@ -67,6 +68,7 @@ const boardStore = createStore<BoardStore>((set, get) => ({
 
       return set({
         filledCells: newFilledCells,
+        highlightedNumber: value,
         history: [...get().history, { note, position: newPoint, value }],
         selectedCell: newPoint,
       });
@@ -80,7 +82,9 @@ const boardStore = createStore<BoardStore>((set, get) => ({
       if (!note) {
         const modifiedCell = { notes: [], position: newPoint, value };
 
-        set({ history: [...get().history, { position: newPoint, value }] });
+        set({
+          history: [...get().history, { position: newPoint, value }],
+        });
 
         return modifiedCell;
       }
@@ -102,6 +106,7 @@ const boardStore = createStore<BoardStore>((set, get) => ({
 
     return set({
       filledCells: modifiedCells,
+      highlightedNumber: value,
       selectedCell: newPoint,
     });
   },
@@ -122,9 +127,18 @@ const boardStore = createStore<BoardStore>((set, get) => ({
 
     return selected.column === position.column || selected.line === position.line;
   },
+  highlightedNumber: undefined,
   history: [],
   isNotesModeEnabled: false,
-  selectCell: (position) => set({ selectedCell: position }),
+  selectCell: (position) => {
+    set({ selectedCell: position });
+
+    const filledValue = get().getCellFilledValue(position);
+
+    set({
+      highlightedNumber: !!filledValue && !Array.isArray(filledValue) ? filledValue : undefined,
+    });
+  },
   selectedCell: undefined,
   toggleNotesMode: () => set({ isNotesModeEnabled: !get().isNotesModeEnabled }),
   undoLastMove: () => {
