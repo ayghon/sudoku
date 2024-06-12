@@ -1,6 +1,5 @@
-import { GameControls, GameHeader, GameInfo, NewGameDialog, Numbers } from '@components';
+import { Board, GameControls, GameHeader, GameInfo, NewGameDialog, Numbers } from '@components';
 import { useGameState } from '@providers';
-import { Board } from '@ui';
 import { GameMode, useTimer } from '@utils';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';

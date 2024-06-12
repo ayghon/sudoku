@@ -1,25 +1,88 @@
 import { createStore, useStore } from 'zustand';
 
-type Position = { line: number; column: number };
+export type Position = { line: number; column: number };
 
 type BoardStore = {
-  selected?: Position;
+  selectedCell?: Position;
   selectCell: (position: Position) => void;
   getHighlightForPosition: (position: Position) => boolean;
+  fillCell: (value?: number, note?: number, position?: Position) => void;
+  filledCells: { position: Position; value?: number; notes?: number[] }[];
+  getCellFilledValue: (position: Position) => number[] | number | undefined;
+  isNotesModeEnabled: boolean;
+  toggleNotesMode: () => void;
+};
+
+const positionsAreEqual = (positionA: Position, positionB: Position) => {
+  return positionA.column === positionB.column && positionA.line === positionB.line;
 };
 
 const boardStore = createStore<BoardStore>((set, get) => ({
-  getHighlightForPosition: (position) => {
-    const selected = get().selected;
+  fillCell: (value, note, position?: Position) => {
+    const newPoint = position ?? get().selectedCell;
 
-    if (!selected || (selected.line === position.line && position.column === selected.column)) {
+    if (!newPoint) {
+      throw new Error('Missing position');
+    }
+    if (typeof value === 'undefined' && typeof note === 'undefined') {
+      throw new Error('Missing cell value or cell note');
+    }
+
+    const isUpdate = !!get().filledCells.find((cell) => positionsAreEqual(cell.position, newPoint));
+
+    const newFilledCell = [
+      ...get().filledCells,
+      value
+        ? { notes: [], position: newPoint, value }
+        : {
+            notes: [note as number],
+            position: newPoint,
+          },
+    ];
+    const modifiedCell = get().filledCells.map((cell) => {
+      if (!positionsAreEqual(cell.position, newPoint)) {
+        return cell;
+      }
+      if (!note) {
+        return { ...cell, notes: [], position: newPoint, value };
+      }
+
+      return {
+        ...cell,
+        notes: cell.notes?.includes(note)
+          ? cell.notes?.filter((n) => n !== note)
+          : [...(cell.notes ?? []), note],
+        position: newPoint,
+        value: undefined,
+      };
+    });
+
+    return set({
+      filledCells: isUpdate ? modifiedCell : newFilledCell,
+      selectedCell: newPoint,
+    });
+  },
+  filledCells: [],
+  getCellFilledValue: (position) => {
+    const { notes, value } =
+      get().filledCells.find((filledCell) => positionsAreEqual(filledCell.position, position)) ??
+      {};
+
+    return value ?? notes;
+  },
+  getHighlightForPosition: (position) => {
+    const selected = get().selectedCell;
+
+    if (!selected || positionsAreEqual(selected, position)) {
       return false;
     }
 
     return selected.column === position.column || selected.line === position.line;
   },
-  selectCell: (position) => set({ selected: position }),
-  selected: undefined,
+  isNotesModeEnabled: false,
+  selectCell: (position) => set({ selectedCell: position }),
+  selectedCell: undefined,
+  toggleNotesMode: () => set({ isNotesModeEnabled: !get().isNotesModeEnabled }),
 }));
 
 export const useBoardState = () => useStore(boardStore);

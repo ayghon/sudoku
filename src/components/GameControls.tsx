@@ -1,4 +1,4 @@
-import { useGameState } from '@providers';
+import { useBoardState } from '@providers';
 import { FC } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
@@ -9,7 +9,7 @@ type GameControlsProps = {
 };
 
 export const GameControls: FC<GameControlsProps> = ({ undoLastMove, eraseCell }) => {
-  const { toggleNotesMode, isNotesModeEnabled } = useGameState();
+  const { toggleNotesMode, isNotesModeEnabled } = useBoardState();
 
   return (
     <View style={[styles.row, { justifyContent: 'space-between' }]}>
