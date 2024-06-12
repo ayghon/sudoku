@@ -3,10 +3,15 @@ import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 export const GameControls = () => {
-  const { toggleNotesMode, isNotesModeEnabled, eraseCell, selectedCell, getCellFilledValue } =
-    useBoardState();
-
-  const undoLastMove = () => {};
+  const {
+    toggleNotesMode,
+    isNotesModeEnabled,
+    eraseCell,
+    selectedCell,
+    getCellFilledValue,
+    undoLastMove,
+    history,
+  } = useBoardState();
 
   const selectedCellValue = selectedCell ? getCellFilledValue(selectedCell) : undefined;
   const isEraserDisabled =
@@ -16,7 +21,7 @@ export const GameControls = () => {
 
   return (
     <View style={[styles.row, { justifyContent: 'space-between' }]}>
-      <Button icon="undo" onPress={undoLastMove} mode="outlined">
+      <Button icon="undo" disabled={history.length === 0} onPress={undoLastMove} mode="outlined">
         Undo
       </Button>
       <Button

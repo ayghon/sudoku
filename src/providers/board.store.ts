@@ -1,17 +1,20 @@
 import { createStore, useStore } from 'zustand';
 
 export type Position = { line: number; column: number };
+export type Cell = { position: Position; value?: number; notes?: number[] };
 
 type BoardStore = {
   selectedCell?: Position;
   selectCell: (position: Position) => void;
   getHighlightForPosition: (position: Position) => boolean;
   fillCell: (value?: number, note?: number, position?: Position) => void;
-  filledCells: { position: Position; value?: number; notes?: number[] }[];
+  filledCells: Cell[];
   getCellFilledValue: (position: Position) => number[] | number | undefined;
   isNotesModeEnabled: boolean;
   toggleNotesMode: () => void;
   eraseCell: (position?: Position) => void;
+  history: (Omit<Cell, 'notes'> & { note?: number })[];
+  undoLastMove: () => void;
 };
 
 const positionsAreEqual = (positionA: Position, positionB: Position) => {
@@ -42,37 +45,63 @@ const boardStore = createStore<BoardStore>((set, get) => ({
       throw new Error('Missing cell value or cell note');
     }
 
-    const isUpdate = !!get().filledCells.find((cell) => positionsAreEqual(cell.position, newPoint));
+    const cellToUpdate = get().filledCells.find((cell) =>
+      positionsAreEqual(cell.position, newPoint),
+    );
+    const isUpdate = !!cellToUpdate;
 
-    const newFilledCell = [
-      ...get().filledCells,
-      value
-        ? { notes: [], position: newPoint, value }
-        : {
-            notes: [note as number],
-            position: newPoint,
-          },
-    ];
-    const modifiedCell = get().filledCells.map((cell) => {
+    if (isUpdate && typeof value !== 'undefined' && cellToUpdate.value === value) {
+      return;
+    }
+
+    if (!isUpdate) {
+      const newFilledCells = [
+        ...get().filledCells,
+        value
+          ? { notes: [], position: newPoint, value }
+          : {
+              notes: [note as number],
+              position: newPoint,
+            },
+      ];
+
+      return set({
+        filledCells: newFilledCells,
+        history: [...get().history, { note, position: newPoint, value }],
+        selectedCell: newPoint,
+      });
+    }
+
+    const modifiedCells = get().filledCells.map((cell) => {
       if (!positionsAreEqual(cell.position, newPoint)) {
         return cell;
       }
+
       if (!note) {
-        return { ...cell, notes: [], position: newPoint, value };
+        const modifiedCell = { notes: [], position: newPoint, value };
+
+        set({ history: [...get().history, { position: newPoint, value }] });
+
+        return modifiedCell;
       }
 
-      return {
-        ...cell,
+      const modifiedNotes = {
         notes: cell.notes?.includes(note)
           ? cell.notes?.filter((n) => n !== note)
           : [...(cell.notes ?? []), note],
         position: newPoint,
         value: undefined,
       };
+
+      set({
+        history: [...get().history, { note, position: newPoint }],
+      });
+
+      return modifiedNotes;
     });
 
     return set({
-      filledCells: isUpdate ? modifiedCell : newFilledCell,
+      filledCells: modifiedCells,
       selectedCell: newPoint,
     });
   },
@@ -93,10 +122,31 @@ const boardStore = createStore<BoardStore>((set, get) => ({
 
     return selected.column === position.column || selected.line === position.line;
   },
+  history: [],
   isNotesModeEnabled: false,
   selectCell: (position) => set({ selectedCell: position }),
   selectedCell: undefined,
   toggleNotesMode: () => set({ isNotesModeEnabled: !get().isNotesModeEnabled }),
+  undoLastMove: () => {
+    const history = get().history;
+    const lastMove = history.slice(-1)[0];
+    const lastMoveForLastPosition = history
+      .slice(0, -1)
+      .findLast((move) => positionsAreEqual(move.position, lastMove.position));
+
+    get().eraseCell(lastMove.position);
+    if (lastMoveForLastPosition) {
+      get().fillCell(
+        lastMoveForLastPosition.value,
+        lastMoveForLastPosition.note,
+        lastMoveForLastPosition.position,
+      );
+    }
+
+    return set({
+      history: history.slice(0, -1),
+    });
+  },
 }));
 
 export const useBoardState = () => useStore(boardStore);
