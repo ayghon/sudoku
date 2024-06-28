@@ -14,8 +14,9 @@ export const GameControls = () => {
   } = useBoardState();
 
   const cell = selectedCell ? getCellFilled(selectedCell) : undefined;
-  const isEraserDisabled = !selectedCell || !cell?.value || cell.notes?.length === 0 || cell.fixed;
-  const isNotesDisabled = !!cell?.fixed;
+  const isEraserDisabled =
+    !selectedCell || (!cell?.value && cell?.notes?.length === 0) || cell?.fixed;
+  const isNotesDisabled = !selectedCell || !!cell?.fixed;
 
   return (
     <View style={[styles.row, { justifyContent: 'space-between' }]}>
