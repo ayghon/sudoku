@@ -1,5 +1,5 @@
 import { Board, GameControls, GameHeader, GameInfo, NewGameDialog, Numbers } from '@components';
-import { useGameState } from '@providers';
+import { useBoardState, useGameState } from '@providers';
 import { GameMode, useTimer } from '@utils';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -16,6 +16,7 @@ export default function Game() {
   const { mode } = useLocalSearchParams<GameSearchParams>();
   const { resetTimer, timer } = useTimer();
   const { changeGameMode } = useGameState();
+  const { initialiseBoard } = useBoardState();
 
   useEffect(() => {
     if (!mode) {
@@ -32,6 +33,7 @@ export default function Game() {
   const handleMode = (mode: GameMode) => {
     resetTimer();
     changeGameMode(mode);
+    initialiseBoard();
     hideDialog();
   };
 

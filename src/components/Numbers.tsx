@@ -3,7 +3,8 @@ import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 export const Numbers = () => {
-  const { fillCell, selectedCell, isNotesModeEnabled } = useBoardState();
+  const { fillCell, selectedCell, getCellFilled, isNotesModeEnabled } = useBoardState();
+  const selectedIsFixed = selectedCell && getCellFilled(selectedCell)?.fixed;
 
   const onPress = (selectedNumber: number) => {
     if (!selectedCell) {
@@ -21,6 +22,7 @@ export const Numbers = () => {
     <View style={styles.row}>
       {new Array(9).fill(0).map((_, index) => (
         <Button
+          disabled={selectedIsFixed}
           onPress={() => onPress(index + 1)}
           labelStyle={{ fontSize: 20 }}
           compact

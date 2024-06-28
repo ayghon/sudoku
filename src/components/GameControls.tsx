@@ -8,16 +8,14 @@ export const GameControls = () => {
     isNotesModeEnabled,
     eraseCell,
     selectedCell,
-    getCellFilledValue,
+    getCellFilled,
     undoLastMove,
     history,
   } = useBoardState();
 
-  const selectedCellValue = selectedCell ? getCellFilledValue(selectedCell) : undefined;
-  const isEraserDisabled =
-    !selectedCell ||
-    !selectedCellValue ||
-    (Array.isArray(selectedCellValue) && selectedCellValue.length === 0);
+  const cell = selectedCell ? getCellFilled(selectedCell) : undefined;
+  const isEraserDisabled = !selectedCell || !cell?.value || cell.notes?.length === 0 || cell.fixed;
+  const isNotesDisabled = !!cell?.fixed;
 
   return (
     <View style={[styles.row, { justifyContent: 'space-between' }]}>
@@ -35,6 +33,7 @@ export const GameControls = () => {
       </Button>
       <Button
         icon="note"
+        disabled={isNotesDisabled}
         onPress={toggleNotesMode}
         mode={isNotesModeEnabled ? 'contained' : 'outlined'}
       >

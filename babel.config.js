@@ -6,7 +6,7 @@ module.exports = function (api) {
         plugins: ['react-native-paper/babel'],
       },
     },
-    plugins: ['module:react-native-dotenv', 'react-native-reanimated/plugin'],
+    plugins: ['react-native-reanimated/plugin'],
     presets: ['babel-preset-expo'],
   };
 };

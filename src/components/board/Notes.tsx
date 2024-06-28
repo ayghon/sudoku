@@ -1,4 +1,5 @@
-import { Position, useBoardState } from '@providers';
+import { useBoardState } from '@providers';
+import { Position } from '@types';
 import { FC } from 'react';
 import { StyleSheet, View } from 'react-native';
 
@@ -12,11 +13,10 @@ const notesList = [notesFirstLine, notesMiddleLine, notesLastLine];
 type NotesProps = { position: Position };
 
 export const Notes: FC<NotesProps> = ({ position }) => {
-  const { getCellFilledValue } = useBoardState();
-  const filledValue = getCellFilledValue(position);
-  const filledNotes = Array.isArray(filledValue) ? filledValue : undefined;
+  const { getCellFilled } = useBoardState();
+  const filledCell = getCellFilled(position);
 
-  if (!filledNotes) {
+  if (!filledCell?.notes) {
     return null;
   }
 
@@ -24,9 +24,9 @@ export const Notes: FC<NotesProps> = ({ position }) => {
     <View style={{ alignItems: 'center', flex: 1 }}>
       {notesList.map((notes, index) => (
         <View key={`notes-list_${index}`} style={styles.note_line}>
-          {notes.map((note) => {
-            return <NoteText key={note} value={filledNotes.includes(note) ? note : undefined} />;
-          })}
+          {notes.map((note) => (
+            <NoteText key={note} value={filledCell.notes?.includes(note) ? note : undefined} />
+          ))}
         </View>
       ))}
     </View>

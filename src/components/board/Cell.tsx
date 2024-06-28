@@ -12,24 +12,19 @@ type CellProps = {
 
 export const Cell: FC<CellProps> = ({ style, position }) => {
   const theme = useTheme();
-  const {
-    highlightedNumber,
-    getHighlightForPosition,
-    selectCell,
-    selectedCell,
-    getCellFilledValue,
-  } = useBoardState();
+  const { highlightedNumber, getHighlightForPosition, selectCell, selectedCell, getCellFilled } =
+    useBoardState();
 
   const handleSelect = () => selectCell(position);
 
-  const filledValue = getCellFilledValue(position);
-  const hasNotes = Array.isArray(filledValue);
+  const filledCell = getCellFilled(position);
 
   const isCellHighlighted = getHighlightForPosition(position);
   const isSelected =
     selectedCell?.column === position.column && selectedCell.line === position.line;
   const isNumberHighlighted =
-    !hasNotes && typeof filledValue !== 'undefined' && highlightedNumber === filledValue;
+    typeof filledCell?.value !== 'undefined' && highlightedNumber === filledCell.value;
+  const isFixedNumber = !!filledCell?.fixed;
 
   return (
     <TouchableRipple
@@ -51,17 +46,18 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
       ]}
     >
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-        {hasNotes ? (
+        {filledCell?.notes?.length ? (
           <Notes position={position} />
         ) : (
           <Text
             variant="bodyLarge"
             style={{
+              color: !isFixedNumber ? theme.colors.tertiary : undefined,
               flex: 1,
               textAlign: 'center',
             }}
           >
-            {filledValue}
+            {filledCell?.value}
           </Text>
         )}
       </View>
