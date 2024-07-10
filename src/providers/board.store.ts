@@ -15,9 +15,9 @@ type BoardStore = {
   history: (Omit<Cell, 'notes'> & { note?: number })[];
   undoLastMove: () => void;
   highlightedNumber: number | undefined;
-  solution: Cell[];
   startNumbers: Cell[];
   initialiseBoard: () => void;
+  checkCellValidity: (position: Position) => boolean;
 };
 
 const positionsAreEqual = (positionA: Position, positionB: Position) => {
@@ -25,6 +25,43 @@ const positionsAreEqual = (positionA: Position, positionB: Position) => {
 };
 
 const boardStore = createStore<BoardStore>((set, get) => ({
+  checkCellValidity: (position) => {
+    const cellFilled = get().getCellFilled(position);
+
+    if (!cellFilled) {
+      return true;
+    }
+
+    const { fixed, value } = cellFilled;
+
+    if (fixed || !value) {
+      return true;
+    }
+
+    return !get().filledCells.find((cell) => {
+      if (
+        // different values or same position
+        cell.value !== cellFilled.value ||
+        positionsAreEqual(cellFilled.position, cell.position)
+      ) {
+        return false;
+      }
+
+      if (
+        // same column or same line
+        cell.position.column === cellFilled.position.column ||
+        cell.position.line === cellFilled.position.line
+      ) {
+        return true;
+      }
+
+      // same box
+      return (
+        Math.floor(cell.position.column / 3) === Math.floor(cellFilled.position.column / 3) &&
+        Math.floor(cell.position.line / 3) === Math.floor(cellFilled.position.line / 3)
+      );
+    });
+  },
   eraseCell: (position) => {
     const selectedPoint = position ?? get().selectedCell;
 
@@ -154,7 +191,6 @@ const boardStore = createStore<BoardStore>((set, get) => ({
     });
   },
   selectedCell: undefined,
-  solution: [],
   startNumbers: [],
   toggleNotesMode: () => set({ isNotesModeEnabled: !get().isNotesModeEnabled }),
   undoLastMove: () => {

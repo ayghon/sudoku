@@ -1,6 +1,6 @@
 import { useBoardState } from '@providers';
 import { FC } from 'react';
-import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
 
 import { Notes } from './Notes';
@@ -12,13 +12,22 @@ type CellProps = {
 
 export const Cell: FC<CellProps> = ({ style, position }) => {
   const theme = useTheme();
-  const { highlightedNumber, getHighlightForPosition, selectCell, selectedCell, getCellFilled } =
-    useBoardState();
+  const { width } = useWindowDimensions();
+  const cellSize = (width - 40) / 9 - 0.1;
+  const {
+    checkCellValidity,
+    highlightedNumber,
+    getHighlightForPosition,
+    selectCell,
+    selectedCell,
+    getCellFilled,
+  } = useBoardState();
 
   const handleSelect = () => selectCell(position);
 
   const filledCell = getCellFilled(position);
 
+  const isCellValid = checkCellValidity(position);
   const isCellHighlighted = getHighlightForPosition(position);
   const isSelected =
     selectedCell?.column === position.column && selectedCell.line === position.line;
@@ -32,17 +41,18 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
       style={[
         {
           backgroundColor:
+            (!isCellValid && theme.colors.errorContainer) ||
             (isNumberHighlighted && theme.colors.tertiaryContainer) ||
             (isCellHighlighted && theme.colors.surfaceVariant) ||
             (isSelected && theme.colors.primaryContainer) ||
             undefined,
         },
+        {
+          height: cellSize,
+          width: cellSize,
+        },
         styles.cell,
         style,
-        {
-          alignItems: 'center',
-          flexDirection: 'row',
-        },
       ]}
     >
       <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
@@ -52,7 +62,10 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
           <Text
             variant="bodyLarge"
             style={{
-              color: !isFixedNumber ? theme.colors.tertiary : undefined,
+              color:
+                (!isCellValid && theme.colors.error) ||
+                (!isFixedNumber && theme.colors.tertiary) ||
+                undefined,
               flex: 1,
               textAlign: 'center',
             }}
@@ -67,9 +80,9 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
 
 const styles = StyleSheet.create({
   cell: {
+    alignItems: 'center',
     borderLeftWidth: 1,
     borderTopWidth: 1,
-    height: 37.1,
-    width: 37.1,
+    flexDirection: 'row',
   },
 });
