@@ -1,5 +1,14 @@
-import { Board, GameControls, GameHeader, GameInfo, NewGameDialog, Numbers } from '@components';
+import {
+  Board,
+  GameControls,
+  GameHeader,
+  GameInfo,
+  NewGameDialog,
+  Numbers,
+  VictoryDialog,
+} from '@components';
 import { useBoardState, useGameState } from '@providers';
+import { GameStatus } from '@types';
 import { GameMode, useTimer } from '@utils';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -16,7 +25,7 @@ export default function Game() {
   const { mode } = useLocalSearchParams<GameSearchParams>();
   const { resetTimer, timer } = useTimer();
   const { changeGameMode } = useGameState();
-  const { initialiseBoard } = useBoardState();
+  const { initialiseBoard, checkGameStatus } = useBoardState();
 
   useEffect(() => {
     if (!mode) {
@@ -36,6 +45,8 @@ export default function Game() {
     initialiseBoard();
     hideDialog();
   };
+
+  const isVictorious = checkGameStatus() === GameStatus.Victorious;
 
   return (
     <>
@@ -65,6 +76,9 @@ export default function Game() {
           isVisible={isNewGameDialogVisible}
           onMode={handleMode}
         />
+      )}
+      {isVictorious && (
+        <VictoryDialog hideDialog={hideDialog} isVisible={isVictorious} onMode={handleMode} />
       )}
     </>
   );

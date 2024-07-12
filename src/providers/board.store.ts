@@ -1,5 +1,5 @@
 import { mockCells } from '@constants';
-import { Cell, Position } from '@types';
+import { Cell, GameStatus, Position } from '@types';
 import { createStore, useStore } from 'zustand';
 
 type BoardStore = {
@@ -18,6 +18,8 @@ type BoardStore = {
   startNumbers: Cell[];
   initialiseBoard: () => void;
   checkCellValidity: (position: Position) => boolean;
+  checkIsFinished: () => boolean;
+  checkGameStatus: () => GameStatus;
 };
 
 const positionsAreEqual = (positionA: Position, positionB: Position) => {
@@ -61,6 +63,30 @@ const boardStore = createStore<BoardStore>((set, get) => ({
         Math.floor(cell.position.line / 3) === Math.floor(cellFilled.position.line / 3)
       );
     });
+  },
+  checkGameStatus: () => {
+    const isFinished = get().checkIsFinished();
+
+    if (!isFinished) {
+      return GameStatus.InProgress;
+    }
+
+    const boardValidity = get().filledCells.map(
+      ({ fixed, position }): boolean => fixed || get().checkCellValidity(position),
+    );
+    const isVictorious = !boardValidity.some((value) => !value);
+
+    if (isVictorious) {
+      return GameStatus.Victorious;
+    } else {
+      return GameStatus.Failure;
+    }
+  },
+  checkIsFinished: () => {
+    const fullBoard = get().filledCells.length === 81;
+    const noNotes = !get().filledCells.find((cell) => cell.notes?.length);
+
+    return fullBoard && noNotes;
   },
   eraseCell: (position) => {
     const selectedPoint = position ?? get().selectedCell;

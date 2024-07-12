@@ -5,3 +5,4 @@ export * from './GameHeader';
 export * from './NewGameDialog';
 export * from './GameModeButtonGroup';
 export * from './board';
+export * from './VictoryDialog';
