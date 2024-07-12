@@ -20,6 +20,7 @@ type BoardStore = {
   checkCellValidity: (position: Position) => boolean;
   checkIsFinished: () => boolean;
   checkGameStatus: () => GameStatus;
+  numbersDepleted: { value: number; count: number }[];
 };
 
 const positionsAreEqual = (positionA: Position, positionB: Position) => {
@@ -95,13 +96,22 @@ const boardStore = createStore<BoardStore>((set, get) => ({
       throw new Error('Missing position');
     }
 
-    if (get().filledCells.find((cell) => positionsAreEqual(cell.position, selectedPoint))?.fixed) {
+    const cell = get().getCellFilled(selectedPoint);
+    if (cell?.fixed) {
       throw new Error('Invalid operation: You cannot update a fixed cell');
     }
 
     return set({
       filledCells: get().filledCells.filter(
         (cell) => !positionsAreEqual(cell.position, selectedPoint),
+      ),
+      numbersDepleted: get().numbersDepleted.map((item) =>
+        item.value === cell?.value
+          ? {
+              ...item,
+              count: item.count > 0 ? item.count - 1 : 0,
+            }
+          : item,
       ),
     });
   },
@@ -145,6 +155,14 @@ const boardStore = createStore<BoardStore>((set, get) => ({
         filledCells: newFilledCells,
         highlightedNumber: value,
         history: [...get().history, { fixed: false, note, position: newPoint, value }],
+        numbersDepleted: get().numbersDepleted.map((item) =>
+          item.value === value
+            ? {
+                ...item,
+                count: item.count < 9 ? item.count + 1 : 9,
+              }
+            : item,
+        ),
         selectedCell: newPoint,
       });
     }
@@ -159,6 +177,23 @@ const boardStore = createStore<BoardStore>((set, get) => ({
 
         set({
           history: [...get().history, { fixed: false, position: newPoint, value }],
+          numbersDepleted: get().numbersDepleted.map((item) => {
+            if (item.value === cell.value) {
+              return {
+                ...item,
+                count: item.count > 0 ? item.count - 1 : 0,
+              };
+            }
+
+            if (item.value === value) {
+              return {
+                ...item,
+                count: item.count < 9 ? item.count + 1 : 9,
+              };
+            }
+
+            return item;
+          }),
         });
 
         return modifiedCell;
@@ -203,10 +238,21 @@ const boardStore = createStore<BoardStore>((set, get) => ({
   initialiseBoard: () => {
     return set({
       filledCells: mockCells,
+      numbersDepleted: get().numbersDepleted.map((item) => {
+        const count = mockCells.reduce(
+          (acc, it) => (item.value === it.value ? (acc += 1) : acc),
+          0,
+        );
+        return { ...item, count };
+      }),
       startNumbers: mockCells,
     });
   },
   isNotesModeEnabled: false,
+  numbersDepleted: new Array(9).fill(0).map((value, index) => ({
+    count: value,
+    value: index + 1,
+  })),
   selectCell: (position) => {
     set({ selectedCell: position });
 
@@ -237,6 +283,14 @@ const boardStore = createStore<BoardStore>((set, get) => ({
 
     return set({
       history: history.slice(0, -1),
+      numbersDepleted: get().numbersDepleted.map((item) =>
+        item.value === lastMove.value
+          ? {
+              ...item,
+              count: item.count > 0 ? item.count - 1 : 0,
+            }
+          : item,
+      ),
     });
   },
 }));
