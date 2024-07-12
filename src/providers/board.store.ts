@@ -1,33 +1,38 @@
 import { mockCells } from '@constants';
 import { Cell, GameStatus, Position } from '@types';
-import { createStore, useStore } from 'zustand';
+import { create } from 'zustand';
 
-type BoardStore = {
-  selectedCell?: Position;
+type BoardAction = {
   selectCell: (position: Position) => void;
   getHighlightForPosition: (position: Position) => boolean;
   fillCell: (value?: number, note?: number, position?: Position) => void;
-  filledCells: Cell[];
   getCellFilled: (position: Position) => Cell | undefined;
-  isNotesModeEnabled: boolean;
   toggleNotesMode: () => void;
   eraseCell: (position?: Position) => void;
   history: (Omit<Cell, 'notes'> & { note?: number })[];
   undoLastMove: () => void;
-  highlightedNumber: number | undefined;
-  startNumbers: Cell[];
   initialiseBoard: () => void;
   checkCellValidity: (position: Position) => boolean;
   checkIsFinished: () => boolean;
   checkGameStatus: () => GameStatus;
+};
+
+type BoardState = {
+  selectedCell?: Position;
+  filledCells: Cell[];
+  isNotesModeEnabled: boolean;
+  highlightedNumber: number | undefined;
+  startNumbers: Cell[];
   numbersDepleted: { value: number; count: number }[];
 };
+
+type BoardStore = BoardState & BoardAction;
 
 const positionsAreEqual = (positionA: Position, positionB: Position) => {
   return positionA.column === positionB.column && positionA.line === positionB.line;
 };
 
-const boardStore = createStore<BoardStore>((set, get) => ({
+export const useBoardState = create<BoardStore>((set, get) => ({
   checkCellValidity: (position) => {
     const cellFilled = get().getCellFilled(position);
 
@@ -294,5 +299,3 @@ const boardStore = createStore<BoardStore>((set, get) => ({
     });
   },
 }));
-
-export const useBoardState = () => useStore(boardStore);

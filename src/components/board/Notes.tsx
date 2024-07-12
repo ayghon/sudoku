@@ -13,7 +13,7 @@ const notesList = [notesFirstLine, notesMiddleLine, notesLastLine];
 type NotesProps = { position: Position };
 
 export const Notes: FC<NotesProps> = ({ position }) => {
-  const { getCellFilled } = useBoardState();
+  const getCellFilled = useBoardState((state) => state.getCellFilled);
   const filledCell = getCellFilled(position);
 
   if (!filledCell?.notes) {

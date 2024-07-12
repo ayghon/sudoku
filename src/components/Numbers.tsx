@@ -3,8 +3,12 @@ import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 export const Numbers = () => {
-  const { fillCell, selectedCell, numbersDepleted, getCellFilled, isNotesModeEnabled } =
-    useBoardState();
+  const selectedCell = useBoardState((state) => state.selectedCell);
+  const numbersDepleted = useBoardState((state) => state.numbersDepleted);
+  const isNotesModeEnabled = useBoardState((state) => state.isNotesModeEnabled);
+  const fillCell = useBoardState((state) => state.fillCell);
+  const getCellFilled = useBoardState((state) => state.getCellFilled);
+
   const selectedIsFixed = selectedCell && getCellFilled(selectedCell)?.fixed;
 
   const onPress = (selectedNumber: number) => {

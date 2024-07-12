@@ -24,8 +24,9 @@ export default function Game() {
   const { top, bottom } = useSafeAreaInsets();
   const { mode } = useLocalSearchParams<GameSearchParams>();
   const { resetTimer, timer } = useTimer();
-  const { changeGameMode } = useGameState();
-  const { initialiseBoard, checkGameStatus } = useBoardState();
+  const changeGameMode = useGameState((state) => state.changeGameMode);
+  const initialiseBoard = useBoardState((state) => state.initialiseBoard);
+  const checkGameStatus = useBoardState((state) => state.checkGameStatus);
 
   useEffect(() => {
     if (!mode) {

@@ -3,15 +3,13 @@ import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 export const GameControls = () => {
-  const {
-    toggleNotesMode,
-    isNotesModeEnabled,
-    eraseCell,
-    selectedCell,
-    getCellFilled,
-    undoLastMove,
-    history,
-  } = useBoardState();
+  const selectedCell = useBoardState((state) => state.selectedCell);
+  const isNotesModeEnabled = useBoardState((state) => state.isNotesModeEnabled);
+  const history = useBoardState((state) => state.history);
+  const toggleNotesMode = useBoardState((state) => state.toggleNotesMode);
+  const eraseCell = useBoardState((state) => state.eraseCell);
+  const getCellFilled = useBoardState((state) => state.getCellFilled);
+  const undoLastMove = useBoardState((state) => state.undoLastMove);
 
   const cell = selectedCell ? getCellFilled(selectedCell) : undefined;
   const isEraserDisabled =

@@ -1,12 +1,12 @@
 import { GameMode } from '@utils';
-import { createStore, useStore } from 'zustand';
+import { create } from 'zustand';
 
 type GameStore = {
   gameMode: GameMode;
   changeGameMode: (mode: GameMode) => void;
 };
 
-const gameStore = createStore<GameStore>((set, get) => ({
+export const useGameState = create<GameStore>((set) => ({
   changeGameMode: (mode) => {
     if (!Object.values(GameMode).includes(mode)) {
       throw new Error(`Invalid game mode: ${mode}`);
@@ -16,5 +16,3 @@ const gameStore = createStore<GameStore>((set, get) => ({
   },
   gameMode: GameMode.Easy,
 }));
-
-export const useGameState = () => useStore(gameStore);

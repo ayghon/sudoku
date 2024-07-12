@@ -9,7 +9,7 @@ type GameInfoProps = {
 };
 
 export const GameInfo: FC<GameInfoProps> = ({ timer }) => {
-  const { gameMode } = useGameState();
+  const gameMode = useGameState((state) => state.gameMode);
   const gameModeText = gameModeToText[gameMode];
 
   return (

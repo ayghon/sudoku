@@ -14,14 +14,13 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
   const theme = useTheme();
   const { width } = useWindowDimensions();
   const cellSize = (width - 40) / 9 - 0.1;
-  const {
-    checkCellValidity,
-    highlightedNumber,
-    getHighlightForPosition,
-    selectCell,
-    selectedCell,
-    getCellFilled,
-  } = useBoardState();
+
+  const highlightedNumber = useBoardState((state) => state.highlightedNumber);
+  const selectedCell = useBoardState((state) => state.selectedCell);
+  const checkCellValidity = useBoardState((state) => state.checkCellValidity);
+  const getHighlightForPosition = useBoardState((state) => state.getHighlightForPosition);
+  const selectCell = useBoardState((state) => state.selectCell);
+  const getCellFilled = useBoardState((state) => state.getCellFilled);
 
   const handleSelect = () => selectCell(position);
 
