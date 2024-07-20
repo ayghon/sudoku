@@ -1,14 +1,20 @@
 import { GameModeButtonGroup } from '@components';
 import { useBoardState } from '@providers';
+import { GameStatus } from '@types';
 import { GameMode } from '@utils';
-import { useRouter } from 'expo-router';
+import { useRouter, Redirect } from 'expo-router';
 import { View } from 'react-native';
 
 export default function Home() {
   const { replace } = useRouter();
   const initialiseBoard = useBoardState((state) => state.initialiseBoard);
+  const checkGameStatus = useBoardState((state) => state.checkGameStatus);
 
-  // TODO redirect to board automatically if ongoing game found
+  const gameStatus = checkGameStatus();
+
+  if (gameStatus === GameStatus.InProgress || gameStatus === GameStatus.Failure) {
+    return <Redirect href="/game" />;
+  }
 
   const onMode = (mode: GameMode) => {
     replace({ params: { mode }, pathname: '/game' });
