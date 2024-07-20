@@ -1,4 +1,4 @@
-import { useBoardState } from '@providers';
+import { useBoardState, useTimerState } from '@providers';
 import { FC } from 'react';
 import { StyleProp, StyleSheet, useWindowDimensions, View, ViewStyle } from 'react-native';
 import { Text, TouchableRipple, useTheme } from 'react-native-paper';
@@ -15,6 +15,7 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
   const { width } = useWindowDimensions();
   const cellSize = (width - 40) / 9 - 0.1;
 
+  const { isPaused } = useTimerState();
   const highlightedNumber = useBoardState((state) => state.highlightedNumber);
   const selectedCell = useBoardState((state) => state.selectedCell);
   const checkCellValidity = useBoardState((state) => state.checkCellValidity);
@@ -33,6 +34,23 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
   const isNumberHighlighted =
     typeof filledCell?.value !== 'undefined' && highlightedNumber === filledCell.value;
   const isFixedNumber = !!filledCell?.fixed;
+
+  if (isPaused) {
+    return (
+      <View
+        style={[
+          { backgroundColor: theme.colors.surfaceDisabled },
+          { flexDirection: 'row', flexWrap: 'wrap' },
+          {
+            height: cellSize,
+            width: cellSize,
+          },
+          styles.cell,
+          style,
+        ]}
+      />
+    );
+  }
 
   return (
     <TouchableRipple

@@ -7,9 +7,9 @@ import {
   Numbers,
   VictoryDialog,
 } from '@components';
-import { useBoardState, useGameState } from '@providers';
+import { useBoardState, useGameState, useTimerState } from '@providers';
 import { GameStatus } from '@types';
-import { GameMode, useTimer } from '@utils';
+import { GameMode } from '@utils';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
@@ -23,7 +23,8 @@ export default function Game() {
   const [isNewGameDialogVisible, setIsNewGameDialogVisible] = useState(false);
   const { top, bottom } = useSafeAreaInsets();
   const { mode } = useLocalSearchParams<GameSearchParams>();
-  const { resetTimer, timer } = useTimer();
+  const { resetTimer } = useTimerState();
+
   const changeGameMode = useGameState((state) => state.changeGameMode);
   const initialiseBoard = useBoardState((state) => state.initialiseBoard);
   const checkGameStatus = useBoardState((state) => state.checkGameStatus);
@@ -62,7 +63,7 @@ export default function Game() {
       >
         <GameHeader launchNewGame={launchNewGame} />
 
-        <GameInfo timer={timer} />
+        <GameInfo />
 
         <Board />
 

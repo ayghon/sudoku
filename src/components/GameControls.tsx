@@ -1,8 +1,9 @@
-import { useBoardState } from '@providers';
+import { useBoardState, useTimerState } from '@providers';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 export const GameControls = () => {
+  const { isPaused } = useTimerState();
   const selectedCell = useBoardState((state) => state.selectedCell);
   const isNotesModeEnabled = useBoardState((state) => state.isNotesModeEnabled);
   const history = useBoardState((state) => state.history);
@@ -18,13 +19,18 @@ export const GameControls = () => {
 
   return (
     <View style={[styles.row, { justifyContent: 'space-between' }]}>
-      <Button icon="undo" disabled={history.length === 0} onPress={undoLastMove} mode="outlined">
+      <Button
+        icon="undo"
+        disabled={isPaused || history.length === 0}
+        onPress={undoLastMove}
+        mode="outlined"
+      >
         Undo
       </Button>
       <Button
         icon="eraser"
         style={{ shadowOpacity: 0 }}
-        disabled={isEraserDisabled}
+        disabled={isPaused || isEraserDisabled}
         onPress={() => eraseCell()}
         mode="outlined"
       >
@@ -32,7 +38,7 @@ export const GameControls = () => {
       </Button>
       <Button
         icon="note"
-        disabled={isNotesDisabled}
+        disabled={isPaused || isNotesDisabled}
         onPress={toggleNotesMode}
         mode={isNotesModeEnabled ? 'contained' : 'outlined'}
       >

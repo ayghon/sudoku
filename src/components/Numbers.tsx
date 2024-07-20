@@ -1,8 +1,9 @@
-import { useBoardState } from '@providers';
+import { useBoardState, useTimerState } from '@providers';
 import { StyleSheet, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 export const Numbers = () => {
+  const { isPaused } = useTimerState();
   const selectedCell = useBoardState((state) => state.selectedCell);
   const numbersDepleted = useBoardState((state) => state.numbersDepleted);
   const isNotesModeEnabled = useBoardState((state) => state.isNotesModeEnabled);
@@ -28,7 +29,9 @@ export const Numbers = () => {
       {new Array(9).fill(0).map((_, index) => (
         <Button
           disabled={
-            selectedIsFixed || numbersDepleted.find((item) => item.value === index + 1)?.count === 9
+            isPaused ||
+            selectedIsFixed ||
+            numbersDepleted.find((item) => item.value === index + 1)?.count === 9
           }
           onPress={() => onPress(index + 1)}
           labelStyle={{ fontSize: 20 }}

@@ -1,4 +1,5 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { TimerProvider } from '@providers';
 import { theme } from '@ui';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
@@ -36,7 +37,9 @@ export default function RootLayout() {
 
   return (
     <PaperProvider theme={theme}>
-      <RootLayoutNav />
+      <TimerProvider>
+        <RootLayoutNav />
+      </TimerProvider>
     </PaperProvider>
   );
 }
