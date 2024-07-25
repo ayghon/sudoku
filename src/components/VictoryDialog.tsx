@@ -1,4 +1,6 @@
-import { FC } from 'react';
+import { Audio } from 'expo-av';
+import LottieView from 'lottie-react-native';
+import { FC, useEffect, useState } from 'react';
 import { Dialog } from 'react-native-paper';
 
 import { GameModeButtonGroup, GameModeButtonGroupProps } from './GameModeButtonGroup';
@@ -9,14 +11,46 @@ type VictoryDialogProps = GameModeButtonGroupProps & {
 };
 
 export const VictoryDialog: FC<VictoryDialogProps> = ({ isVisible, hideDialog, onMode }) => {
-  // TODO launch victory confetti animation + melody
+  const [showDialog, setShowDialog] = useState(false);
+  const [sound, setSound] = useState<Audio.Sound>();
+
+  async function playSound() {
+    const { sound } = await Audio.Sound.createAsync(require('../../assets/audio/victory.wav'));
+    setSound(sound);
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
   return (
-    <Dialog visible={isVisible} onDismiss={hideDialog}>
-      <Dialog.Title>You win !</Dialog.Title>
-      <Dialog.Content>
-        <GameModeButtonGroup onMode={onMode} />
-      </Dialog.Content>
-    </Dialog>
+    <>
+      {!showDialog && isVisible && (
+        <LottieView
+          source={require('../../assets/animations/victory.json')}
+          style={{
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            height: '100%',
+            position: 'absolute',
+            width: '100%',
+          }}
+          onAnimationLoaded={playSound}
+          onAnimationFinish={() => setShowDialog(true)}
+          autoPlay
+          loop={false}
+        />
+      )}
+      <Dialog visible={showDialog} onDismiss={hideDialog}>
+        <Dialog.Title>You win !</Dialog.Title>
+        <Dialog.Content>
+          <GameModeButtonGroup onMode={onMode} />
+        </Dialog.Content>
+      </Dialog>
+    </>
   );
 };
