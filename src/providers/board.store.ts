@@ -1,8 +1,12 @@
-import { mockCells } from '@constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Cell, GameStatus, Position } from '@types';
+import { GameMode } from '@utils';
+import { getSudoku } from 'sudoku-gen';
+import { Difficulty } from 'sudoku-gen/dist/types/difficulty.type';
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+
+type History = (Omit<Cell, 'notes'> & { note?: number })[];
 
 type BoardAction = {
   selectCell: (position: Position) => void;
@@ -11,19 +15,19 @@ type BoardAction = {
   getCellFilled: (position: Position) => Cell | undefined;
   toggleNotesMode: () => void;
   eraseCell: (position?: Position) => void;
-  history: (Omit<Cell, 'notes'> & { note?: number })[];
   undoLastMove: () => void;
-  initialiseBoard: () => void;
+  initialiseBoard: (mode: GameMode) => void;
   checkCellValidity: (position: Position) => boolean;
   checkIsFinished: () => boolean;
   checkGameStatus: () => GameStatus;
 };
 
 type BoardState = {
+  history: History;
   selectedCell?: Position;
   filledCells: Cell[];
   isNotesModeEnabled: boolean;
-  highlightedNumber: number | undefined;
+  highlightedNumber?: number;
   startNumbers: Cell[];
   numbersDepleted: { value: number; count: number }[];
 };
@@ -230,7 +234,7 @@ export const useBoardState = create<BoardStore>()(
           selectedCell: newPoint,
         });
       },
-      filledCells: [],
+      filledCells: [] as Cell[],
       getCellFilled: (position) =>
         get().filledCells.find((filledCell) => positionsAreEqual(filledCell.position, position)),
       getHighlightForPosition: (position) => {
@@ -242,22 +246,45 @@ export const useBoardState = create<BoardStore>()(
 
         return selected.column === position.column || selected.line === position.line;
       },
-      highlightedNumber: undefined,
-      history: [],
-      initialiseBoard: () => {
+      history: [] as History,
+      initialiseBoard: (mode) => {
+        const modeToDifficulty: Difficulty = mode.toLowerCase() as Difficulty;
+        const sudoku = getSudoku(modeToDifficulty);
+
+        const sudokuGeneratorToFilledCells = sudoku.puzzle
+          .split('')
+          .reduce<Cell[]>((acc, it, index) => {
+            if (it === '-') {
+              return acc;
+            }
+
+            const line = Math.floor(index / 9);
+            return [
+              ...acc,
+              {
+                fixed: true,
+                position: {
+                  column: index - 9 * line,
+                  line,
+                },
+                value: parseInt(it, 10),
+              },
+            ];
+          }, []);
+
         return set({
-          filledCells: mockCells,
+          filledCells: sudokuGeneratorToFilledCells,
           numbersDepleted: get().numbersDepleted.map((item) => {
-            const count = mockCells.reduce(
+            const count = sudokuGeneratorToFilledCells.reduce(
               (acc, it) => (item.value === it.value ? (acc += 1) : acc),
               0,
             );
             return { ...item, count };
           }),
-          startNumbers: mockCells,
+          startNumbers: sudokuGeneratorToFilledCells,
         });
       },
-      isNotesModeEnabled: false,
+      isNotesModeEnabled: false as boolean,
       numbersDepleted: new Array(9).fill(0).map((value, index) => ({
         count: value,
         value: index + 1,
@@ -271,8 +298,7 @@ export const useBoardState = create<BoardStore>()(
           highlightedNumber: value,
         });
       },
-      selectedCell: undefined,
-      startNumbers: [],
+      startNumbers: [] as Cell[],
       toggleNotesMode: () => set({ isNotesModeEnabled: !get().isNotesModeEnabled }),
       undoLastMove: () => {
         const history = get().history;

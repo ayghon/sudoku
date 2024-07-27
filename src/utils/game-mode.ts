@@ -1,11 +1,6 @@
 export enum GameMode {
-  Easy,
-  Medium,
-  Hard,
+  Easy = 'Easy',
+  Medium = 'Medium',
+  Hard = 'Hard',
+  Expert = 'Expert',
 }
-
-export const gameModeToText: Record<GameMode, string> = {
-  [GameMode.Easy]: 'Easy',
-  [GameMode.Medium]: 'Medium',
-  [GameMode.Hard]: 'Hard',
-};

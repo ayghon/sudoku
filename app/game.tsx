@@ -10,7 +10,7 @@ import {
 import { useBoardState, useGameState, useTimerState } from '@providers';
 import { GameStatus } from '@types';
 import { GameMode } from '@utils';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -24,6 +24,7 @@ export default function Game() {
   const { top, bottom } = useSafeAreaInsets();
   const { mode } = useLocalSearchParams<GameSearchParams>();
   const { resetTimer } = useTimerState();
+  const { back } = useRouter();
 
   const changeGameMode = useGameState((state) => state.changeGameMode);
   const initialiseBoard = useBoardState((state) => state.initialiseBoard);
@@ -33,18 +34,21 @@ export default function Game() {
     if (!mode) {
       return;
     }
-    const parsedMode = parseInt(mode, 10);
 
-    changeGameMode(parsedMode);
-  }, [changeGameMode, mode]);
+    if (!Object.values(GameMode).includes(mode as GameMode)) {
+      back();
+      return;
+    }
 
-  // GAME FUNCTIONS
+    changeGameMode(mode as GameMode);
+  }, [back, changeGameMode, mode]);
+
   const launchNewGame = () => setIsNewGameDialogVisible(true);
   const hideDialog = () => setIsNewGameDialogVisible(false);
   const handleMode = (mode: GameMode) => {
     resetTimer();
     changeGameMode(mode);
-    initialiseBoard();
+    initialiseBoard(mode);
     hideDialog();
   };
 

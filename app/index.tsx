@@ -18,7 +18,7 @@ export default function Home() {
 
   const onMode = (mode: GameMode) => {
     replace({ params: { mode }, pathname: '/game' });
-    initialiseBoard();
+    initialiseBoard(mode);
   };
 
   return (
