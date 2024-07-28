@@ -1,7 +1,7 @@
 import { useBoardState } from '@providers';
 import { Position } from '@types';
 import { FC } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 
 import { NoteText } from './NoteText';
 
@@ -23,7 +23,14 @@ export const Notes: FC<NotesProps> = ({ position }) => {
   return (
     <View style={{ alignItems: 'center', flex: 1 }}>
       {notesList.map((notes, index) => (
-        <View key={`notes-list_${index}`} style={styles.note_line}>
+        <View
+          key={`notes-list_${index}`}
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: 4,
+          }}
+        >
           {notes.map((note) => (
             <NoteText key={note} value={filledCell.notes?.includes(note) ? note : undefined} />
           ))}
@@ -32,11 +39,3 @@ export const Notes: FC<NotesProps> = ({ position }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  note_line: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 4,
-  },
-});

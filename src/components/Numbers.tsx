@@ -1,14 +1,17 @@
 import { useBoardState, useTimerState } from '@providers';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 export const Numbers = () => {
   const { isPaused } = useTimerState();
-  const selectedCell = useBoardState((state) => state.selectedCell);
-  const numbersDepleted = useBoardState((state) => state.numbersDepleted);
-  const isNotesModeEnabled = useBoardState((state) => state.isNotesModeEnabled);
-  const fillCell = useBoardState((state) => state.fillCell);
-  const getCellFilled = useBoardState((state) => state.getCellFilled);
+  const { selectedCell, numbersDepleted, isNotesModeEnabled, fillCell, getCellFilled } =
+    useBoardState((state) => ({
+      fillCell: state.fillCell,
+      getCellFilled: state.getCellFilled,
+      isNotesModeEnabled: state.isNotesModeEnabled,
+      numbersDepleted: state.numbersDepleted,
+      selectedCell: state.selectedCell,
+    }));
 
   const selectedIsFixed = selectedCell && getCellFilled(selectedCell)?.fixed;
 
@@ -25,7 +28,12 @@ export const Numbers = () => {
   };
 
   return (
-    <View style={styles.row}>
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      }}
+    >
       {new Array(9).fill(0).map((_, index) => (
         <Button
           disabled={
@@ -45,10 +53,3 @@ export const Numbers = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-});

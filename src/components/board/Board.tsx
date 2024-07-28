@@ -20,7 +20,15 @@ export const Board = () => {
               line={lineIndex + 2}
               style={[
                 styles.box_right_border,
-                lineIndex === 6 ? styles.line_bottom_border : styles.box_separator,
+                lineIndex === 6
+                  ? {
+                      // line bottom border
+                      borderBottomWidth: 1,
+                    }
+                  : {
+                      // box separator
+                      borderBottomWidth: 2,
+                    },
               ]}
             />
           </View>
@@ -33,11 +41,5 @@ export const Board = () => {
 const styles = StyleSheet.create({
   box_right_border: {
     borderRightWidth: 1,
-  },
-  box_separator: {
-    borderBottomWidth: 2,
-  },
-  line_bottom_border: {
-    borderBottomWidth: 1,
   },
 });

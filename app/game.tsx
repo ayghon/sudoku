@@ -27,8 +27,10 @@ export default function Game() {
   const { back } = useRouter();
 
   const changeGameMode = useGameState((state) => state.changeGameMode);
-  const initialiseBoard = useBoardState((state) => state.initialiseBoard);
-  const checkGameStatus = useBoardState((state) => state.checkGameStatus);
+  const { initialiseBoard, checkGameStatus } = useBoardState((state) => ({
+    checkGameStatus: state.checkGameStatus,
+    initialiseBoard: state.initialiseBoard,
+  }));
 
   useEffect(() => {
     if (!mode) {

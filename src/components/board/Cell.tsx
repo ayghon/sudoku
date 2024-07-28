@@ -16,12 +16,21 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
   const cellSize = (width - 40) / 9 - 0.1;
 
   const { isPaused } = useTimerState();
-  const highlightedNumber = useBoardState((state) => state.highlightedNumber);
-  const selectedCell = useBoardState((state) => state.selectedCell);
-  const checkCellValidity = useBoardState((state) => state.checkCellValidity);
-  const getHighlightForPosition = useBoardState((state) => state.getHighlightForPosition);
-  const selectCell = useBoardState((state) => state.selectCell);
-  const getCellFilled = useBoardState((state) => state.getCellFilled);
+  const {
+    highlightedNumber,
+    selectedCell,
+    checkCellValidity,
+    getHighlightForPosition,
+    selectCell,
+    getCellFilled,
+  } = useBoardState((state) => ({
+    checkCellValidity: state.checkCellValidity,
+    getCellFilled: state.getCellFilled,
+    getHighlightForPosition: state.getHighlightForPosition,
+    highlightedNumber: state.highlightedNumber,
+    selectCell: state.selectCell,
+    selectedCell: state.selectedCell,
+  }));
 
   const handleSelect = () => selectCell(position);
 
@@ -39,12 +48,12 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
     return (
       <View
         style={[
-          { backgroundColor: theme.colors.surfaceDisabled },
-          { flexDirection: 'row', flexWrap: 'wrap' },
           {
+            backgroundColor: theme.colors.surfaceDisabled,
             height: cellSize,
             width: cellSize,
           },
+          styles.row_wrap,
           styles.cell,
           style,
         ]}
@@ -63,8 +72,6 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
             (isCellHighlighted && theme.colors.surfaceVariant) ||
             (isSelected && theme.colors.primaryContainer) ||
             undefined,
-        },
-        {
           height: cellSize,
           width: cellSize,
         },
@@ -72,7 +79,7 @@ export const Cell: FC<CellProps> = ({ style, position }) => {
         style,
       ]}
     >
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+      <View style={styles.row_wrap}>
         {filledCell?.notes?.length ? (
           <Notes position={position} />
         ) : (
@@ -101,5 +108,9 @@ const styles = StyleSheet.create({
     borderLeftWidth: 1,
     borderTopWidth: 1,
     flexDirection: 'row',
+  },
+  row_wrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 });

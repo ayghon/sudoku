@@ -1,6 +1,6 @@
 import { useTimerState } from '@providers';
 import { FC } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Button, IconButton, useTheme } from 'react-native-paper';
 
 type GameHeaderProps = {
@@ -12,7 +12,13 @@ export const GameHeader: FC<GameHeaderProps> = ({ launchNewGame }) => {
   const { pauseTimer, isPaused } = useTimerState();
 
   return (
-    <View style={styles.row}>
+    <View
+      style={{
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+      }}
+    >
       <Button onPress={launchNewGame} mode="contained-tonal">
         New
       </Button>
@@ -25,11 +31,3 @@ export const GameHeader: FC<GameHeaderProps> = ({ launchNewGame }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  row: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-});

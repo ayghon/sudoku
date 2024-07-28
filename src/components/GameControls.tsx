@@ -1,16 +1,26 @@
 import { useBoardState, useTimerState } from '@providers';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Button } from 'react-native-paper';
 
 export const GameControls = () => {
   const { isPaused } = useTimerState();
-  const selectedCell = useBoardState((state) => state.selectedCell);
-  const isNotesModeEnabled = useBoardState((state) => state.isNotesModeEnabled);
-  const history = useBoardState((state) => state.history);
-  const toggleNotesMode = useBoardState((state) => state.toggleNotesMode);
-  const eraseCell = useBoardState((state) => state.eraseCell);
-  const getCellFilled = useBoardState((state) => state.getCellFilled);
-  const undoLastMove = useBoardState((state) => state.undoLastMove);
+  const {
+    isNotesModeEnabled,
+    selectedCell,
+    eraseCell,
+    getCellFilled,
+    history,
+    toggleNotesMode,
+    undoLastMove,
+  } = useBoardState((state) => ({
+    eraseCell: state.eraseCell,
+    getCellFilled: state.getCellFilled,
+    history: state.history,
+    isNotesModeEnabled: state.isNotesModeEnabled,
+    selectedCell: state.selectedCell,
+    toggleNotesMode: state.toggleNotesMode,
+    undoLastMove: state.undoLastMove,
+  }));
 
   const cell = selectedCell ? getCellFilled(selectedCell) : undefined;
   const isEraserDisabled =
@@ -18,7 +28,7 @@ export const GameControls = () => {
   const isNotesDisabled = !selectedCell || !!cell?.fixed;
 
   return (
-    <View style={[styles.row, { justifyContent: 'space-between' }]}>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
       <Button
         icon="undo"
         disabled={isPaused || history.length === 0}
@@ -47,9 +57,3 @@ export const GameControls = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-  },
-});

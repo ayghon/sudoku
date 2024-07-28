@@ -7,8 +7,10 @@ import { View } from 'react-native';
 
 export default function Home() {
   const { replace } = useRouter();
-  const initialiseBoard = useBoardState((state) => state.initialiseBoard);
-  const checkGameStatus = useBoardState((state) => state.checkGameStatus);
+  const { initialiseBoard, checkGameStatus } = useBoardState((state) => ({
+    checkGameStatus: state.checkGameStatus,
+    initialiseBoard: state.initialiseBoard,
+  }));
 
   const gameStatus = checkGameStatus();
 
