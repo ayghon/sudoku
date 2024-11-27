@@ -3,8 +3,8 @@ import { Cell, GameStatus, Position } from '@types';
 import { GameMode } from '@utils';
 import { getSudoku } from 'sudoku-gen';
 import { Difficulty } from 'sudoku-gen/dist/types/difficulty.type';
-import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { createWithEqualityFn as create } from 'zustand/traditional';
 
 type History = (Omit<Cell, 'notes'> & { note?: number })[];
 
