@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { format } from 'date-fns';
 import { createContext, FC, PropsWithChildren, useContext } from 'react';
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
+import { createWithEqualityFn as create } from 'zustand/traditional';
 
 type TimerStore = {
   seconds: number;
@@ -11,26 +11,37 @@ type TimerStore = {
   pauseTimer: () => void;
   getTime: () => string;
   stopTimer: () => void;
-  interval: NodeJS.Timeout;
+  interval: NodeJS.Timeout | null;
+  startTimer: () => void;
 };
 
 const useTimerStore = create<TimerStore>()(
   persist(
     (set, get) => ({
       getTime: () => format(new Date().setHours(0, 0, get().seconds, 0), 'HH:mm:ss'),
-      interval: setInterval(() => {
-        if (get().isPaused) {
-          return;
-        }
-
-        set({ seconds: get().seconds + 1 });
-      }, 1000),
+      interval: null,
       isPaused: false,
       pauseTimer: () => set({ isPaused: !get().isPaused }),
       resetTimer: () => set({ seconds: 0 }),
       seconds: 0,
+      startTimer: () => {
+        set({
+          interval: setInterval(() => {
+            if (get().isPaused) {
+              return;
+            }
+
+            set({ seconds: get().seconds + 1 });
+          }, 1000),
+        });
+      },
       stopTimer: () => {
-        clearInterval(get().interval);
+        if (!get().interval) {
+          set({ seconds: 0 });
+          return;
+        }
+
+        clearInterval(get().interval as NodeJS.Timeout);
         set({ seconds: 0 });
       },
     }),

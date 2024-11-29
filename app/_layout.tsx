@@ -1,15 +1,12 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { TimerProvider } from '@providers';
 import { theme } from '@ui';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Slot } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { PaperProvider } from 'react-native-paper';
 
 export { ErrorBoundary } from 'expo-router';
-
-export const unstable_settings = {};
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -37,18 +34,7 @@ export default function RootLayout() {
 
   return (
     <PaperProvider theme={theme}>
-      <TimerProvider>
-        <RootLayoutNav />
-      </TimerProvider>
+      <Slot />
     </PaperProvider>
-  );
-}
-
-function RootLayoutNav() {
-  return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="game" />
-    </Stack>
   );
 }

@@ -23,7 +23,7 @@ export default function Game() {
   const [isNewGameDialogVisible, setIsNewGameDialogVisible] = useState(false);
   const { top, bottom } = useSafeAreaInsets();
   const { mode } = useLocalSearchParams<GameSearchParams>();
-  const { resetTimer } = useTimerState();
+  const { resetTimer, startTimer } = useTimerState();
   const { back } = useRouter();
 
   const changeGameMode = useGameState((state) => state.changeGameMode);
@@ -42,8 +42,10 @@ export default function Game() {
       return;
     }
 
+    startTimer();
+
     changeGameMode(mode as GameMode);
-  }, [back, changeGameMode, mode]);
+  }, [back, changeGameMode, mode, startTimer]);
 
   const launchNewGame = () => setIsNewGameDialogVisible(true);
   const hideDialog = () => setIsNewGameDialogVisible(false);

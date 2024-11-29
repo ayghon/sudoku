@@ -2,7 +2,7 @@ import { GameModeButtonGroup } from '@components';
 import { useBoardState } from '@providers';
 import { GameStatus } from '@types';
 import { GameMode } from '@utils';
-import { useRouter, Redirect } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import { View } from 'react-native';
 
 export default function Home() {

@@ -37,11 +37,9 @@ export const Numbers = () => {
       {new Array(9).fill(0).map((_, index) => (
         <Button
           disabled={
-            isPaused ||
-            selectedIsFixed ||
-            numbersDepleted.find((item) => item.value === index + 1)?.count === 9
+            isPaused || numbersDepleted.find((item) => item.value === index + 1)?.count === 9
           }
-          onPress={() => onPress(index + 1)}
+          onPress={!selectedIsFixed ? () => onPress(index + 1) : undefined}
           labelStyle={{ fontSize: 20 }}
           compact
           key={`button-${index + 1}`}

@@ -23,6 +23,7 @@ type BoardAction = {
 };
 
 type BoardState = {
+  gameStatus: GameStatus;
   history: History;
   selectedCell?: Position;
   filledCells: Cell[];
@@ -79,6 +80,10 @@ export const useBoardState = create<BoardStore>()(
         });
       },
       checkGameStatus: () => {
+        if (get().filledCells.length === get().startNumbers.length) {
+          return GameStatus.Idle;
+        }
+
         const isFinished = get().checkIsFinished();
 
         if (!isFinished) {
@@ -235,6 +240,7 @@ export const useBoardState = create<BoardStore>()(
         });
       },
       filledCells: [] as Cell[],
+      gameStatus: GameStatus.Idle,
       getCellFilled: (position) =>
         get().filledCells.find((filledCell) => positionsAreEqual(filledCell.position, position)),
       getHighlightForPosition: (position) => {
@@ -274,6 +280,7 @@ export const useBoardState = create<BoardStore>()(
 
         return set({
           filledCells: sudokuGeneratorToFilledCells,
+          gameStatus: GameStatus.InProgress,
           numbersDepleted: get().numbersDepleted.map((item) => {
             const count = sudokuGeneratorToFilledCells.reduce(
               (acc, it) => (item.value === it.value ? (acc += 1) : acc),
