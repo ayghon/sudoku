@@ -7,7 +7,7 @@ import {
   Numbers,
   VictoryDialog,
 } from '@components';
-import { useBoardState, useGameState, useTimerState } from '@providers';
+import { useBoardState, useGameState } from '@providers';
 import { GameMode, GameStatus } from '@types';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -22,7 +22,8 @@ export default function Game() {
   const [isNewGameDialogVisible, setIsNewGameDialogVisible] = useState(false);
   const { top, bottom } = useSafeAreaInsets();
   const { mode } = useLocalSearchParams<GameSearchParams>();
-  const { resetTimer, startTimer } = useTimerState();
+  // TODO uncomment when timer is fixed
+  // const { resetTimer, startTimer } = useTimerState();
   const { back } = useRouter();
 
   const changeGameMode = useGameState((state) => state.changeGameMode);
@@ -41,15 +42,15 @@ export default function Game() {
       return;
     }
 
-    startTimer();
+    // startTimer();
 
     changeGameMode(mode as GameMode);
-  }, [back, changeGameMode, mode, startTimer]);
+  }, [back, changeGameMode, mode]);
 
   const launchNewGame = () => setIsNewGameDialogVisible(true);
   const hideDialog = () => setIsNewGameDialogVisible(false);
   const handleMode = (mode: GameMode) => {
-    resetTimer();
+    // resetTimer();
     changeGameMode(mode);
     initialiseBoard(mode);
     hideDialog();

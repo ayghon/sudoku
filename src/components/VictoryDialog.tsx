@@ -1,5 +1,3 @@
-import { useBoardState, useTimerState } from '@providers';
-import { GameStatus } from '@types';
 import { Audio } from 'expo-av';
 import LottieView from 'lottie-react-native';
 import { FC, useEffect, useState } from 'react';
@@ -15,20 +13,21 @@ type VictoryDialogProps = GameModeButtonGroupProps & {
 export const VictoryDialog: FC<VictoryDialogProps> = ({ isVisible, hideDialog, onMode }) => {
   const [showDialog, setShowDialog] = useState(false);
   const [sound, setSound] = useState<Audio.Sound>();
-  const checkGameStatus = useBoardState((state) => state.checkGameStatus);
-  const gameStatus = checkGameStatus();
-  const { pauseTimer, resetTimer } = useTimerState();
+  // const checkGameStatus = useBoardState((state) => state.checkGameStatus);
+  // const gameStatus = checkGameStatus();
+  // const { pauseTimer, resetTimer } = useTimerState();
 
-  useEffect(() => {
-    if (gameStatus === GameStatus.Victorious) {
-      pauseTimer();
-    }
-
-    return () => {
-      resetTimer();
-      pauseTimer();
-    };
-  }, [gameStatus, pauseTimer, resetTimer]);
+  // TODO uncomment when timer is fixed
+  // useEffect(() => {
+  //   if (gameStatus === GameStatus.Victorious) {
+  //     pauseTimer();
+  //   }
+  //
+  //   return () => {
+  //     resetTimer();
+  //     pauseTimer();
+  //   };
+  // }, [gameStatus, pauseTimer, resetTimer]);
 
   async function playSound() {
     const { sound } = await Audio.Sound.createAsync(require('../../assets/audio/victory.wav'));

@@ -1,15 +1,15 @@
-import { useTimerState } from '@providers';
 import { FC } from 'react';
 import { View } from 'react-native';
-import { Button, IconButton, useTheme } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 
 type GameHeaderProps = {
   launchNewGame: () => void;
 };
 
 export const GameHeader: FC<GameHeaderProps> = ({ launchNewGame }) => {
-  const theme = useTheme();
-  const { pauseTimer, isPaused } = useTimerState();
+  // const theme = useTheme();
+  // TODO uncomment when timer is fixed
+  // const { pauseTimer, isPaused } = useTimerState();
 
   return (
     <View
@@ -22,12 +22,12 @@ export const GameHeader: FC<GameHeaderProps> = ({ launchNewGame }) => {
       <Button onPress={launchNewGame} mode="contained-tonal">
         New
       </Button>
-      <IconButton
-        onPress={pauseTimer}
-        icon={isPaused ? 'play' : 'pause'}
-        mode="outlined"
-        iconColor={theme.colors.primary}
-      />
+      {/*<IconButton*/}
+      {/*  onPress={pauseTimer}*/}
+      {/*  icon={isPaused ? 'play' : 'pause'}*/}
+      {/*  mode="outlined"*/}
+      {/*  iconColor={theme.colors.primary}*/}
+      {/*/>*/}
     </View>
   );
 };
