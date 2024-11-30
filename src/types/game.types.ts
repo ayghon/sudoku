@@ -4,3 +4,10 @@ export enum GameStatus {
   Failure = 'failure',
   Victorious = 'victorious',
 }
+
+export enum GameMode {
+  Easy = 'Easy',
+  Medium = 'Medium',
+  Hard = 'Hard',
+  Expert = 'Expert',
+}

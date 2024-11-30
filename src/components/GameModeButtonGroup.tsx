@@ -1,4 +1,4 @@
-import { GameMode } from '@utils';
+import { GameMode } from '@types';
 import { FC } from 'react';
 import { View } from 'react-native';
 import { Button } from 'react-native-paper';

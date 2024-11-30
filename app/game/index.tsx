@@ -8,8 +8,7 @@ import {
   VictoryDialog,
 } from '@components';
 import { useBoardState, useGameState, useTimerState } from '@providers';
-import { GameStatus } from '@types';
-import { GameMode } from '@utils';
+import { GameMode, GameStatus } from '@types';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';

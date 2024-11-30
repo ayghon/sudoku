@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Cell, GameStatus, Position } from '@types';
-import { GameMode } from '@utils';
+import { Cell, GameMode, GameStatus, Position } from '@types';
 import { getSudoku } from 'sudoku-gen';
 import { Difficulty } from 'sudoku-gen/dist/types/difficulty.type';
 import { createJSONStorage, persist } from 'zustand/middleware';
