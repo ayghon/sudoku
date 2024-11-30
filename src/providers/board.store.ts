@@ -19,6 +19,7 @@ type BoardAction = {
   checkCellValidity: (position: Position) => boolean;
   checkIsFinished: () => boolean;
   checkGameStatus: () => GameStatus;
+  solvePuzzle: () => void;
 };
 
 type BoardState = {
@@ -29,6 +30,7 @@ type BoardState = {
   isNotesModeEnabled: boolean;
   highlightedNumber?: number;
   startNumbers: Cell[];
+  solution: Cell[];
   numbersDepleted: { value: number; count: number }[];
 };
 
@@ -256,26 +258,8 @@ export const useBoardState = create<BoardStore>()(
         const modeToDifficulty: Difficulty = mode.toLowerCase() as Difficulty;
         const sudoku = getSudoku(modeToDifficulty);
 
-        const sudokuGeneratorToFilledCells = sudoku.puzzle
-          .split('')
-          .reduce<Cell[]>((acc, it, index) => {
-            if (it === '-') {
-              return acc;
-            }
-
-            const line = Math.floor(index / 9);
-            return [
-              ...acc,
-              {
-                fixed: true,
-                position: {
-                  column: index - 9 * line,
-                  line,
-                },
-                value: parseInt(it, 10),
-              },
-            ];
-          }, []);
+        const sudokuGeneratorToFilledCells = sudokuToCells(sudoku.puzzle);
+        const sudokuGeneratorSolution = sudokuToCells(sudoku.solution);
 
         return set({
           filledCells: sudokuGeneratorToFilledCells,
@@ -287,10 +271,11 @@ export const useBoardState = create<BoardStore>()(
             );
             return { ...item, count };
           }),
+          solution: sudokuGeneratorSolution,
           startNumbers: sudokuGeneratorToFilledCells,
         });
       },
-      isNotesModeEnabled: false as boolean,
+      isNotesModeEnabled: false,
       numbersDepleted: new Array(9).fill(0).map((value, index) => ({
         count: value,
         value: index + 1,
@@ -304,6 +289,12 @@ export const useBoardState = create<BoardStore>()(
           highlightedNumber: value,
         });
       },
+      solution: [],
+      solvePuzzle: () =>
+        set({
+          filledCells: get().solution,
+          startNumbers: [],
+        }),
       startNumbers: [] as Cell[],
       toggleNotesMode: () => set({ isNotesModeEnabled: !get().isNotesModeEnabled }),
       undoLastMove: () => {
@@ -341,3 +332,23 @@ export const useBoardState = create<BoardStore>()(
     },
   ),
 );
+
+const sudokuToCells = (sudoku: string): Cell[] =>
+  sudoku.split('').reduce<Cell[]>((acc, it, index) => {
+    if (it === '-') {
+      return acc;
+    }
+
+    const line = Math.floor(index / 9);
+    return [
+      ...acc,
+      {
+        fixed: true,
+        position: {
+          column: index - 9 * line,
+          line,
+        },
+        value: parseInt(it, 10),
+      },
+    ];
+  }, []);
