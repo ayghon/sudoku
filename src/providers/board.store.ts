@@ -254,7 +254,7 @@ export const useBoardState = create<BoardStore>()(
 
         return selected.column === position.column || selected.line === position.line;
       },
-      history: [] as History,
+      history: [],
       initialiseBoard: (mode) => {
         const modeToDifficulty: Difficulty = mode.toLowerCase() as Difficulty;
         const sudoku = getSudoku(modeToDifficulty);
@@ -265,6 +265,9 @@ export const useBoardState = create<BoardStore>()(
         return set({
           filledCells: sudokuGeneratorToFilledCells,
           gameStatus: GameStatus.InProgress,
+          highlightedNumber: undefined,
+          history: [],
+          isNotesModeEnabled: false,
           numbersDepleted: get().numbersDepleted.map((item) => {
             const count = sudokuGeneratorToFilledCells.reduce(
               (acc, it) => (item.value === it.value ? (acc += 1) : acc),
@@ -272,6 +275,7 @@ export const useBoardState = create<BoardStore>()(
             );
             return { ...item, count };
           }),
+          selectedCell: undefined,
           solution: sudokuGeneratorSolution,
           startNumbers: sudokuGeneratorToFilledCells,
         });
