@@ -9,7 +9,7 @@ export const NoteText: FC<NoteTextProps> = ({ value }) => {
       variant="labelSmall"
       style={{
         fontWeight: '300',
-        lineHeight: 0,
+        lineHeight: 12,
       }}
     >
       {value ?? '  '}

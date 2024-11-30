@@ -154,6 +154,7 @@ export const useBoardState = create<BoardStore>()(
 
         const isUpdate = !!cellToUpdate;
 
+        // don't update if values are identical
         if (isUpdate && typeof value !== 'undefined' && cellToUpdate.value === value) {
           return;
         }
