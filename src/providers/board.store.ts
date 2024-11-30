@@ -20,9 +20,11 @@ type BoardAction = {
   checkIsFinished: () => boolean;
   checkGameStatus: () => GameStatus;
   solvePuzzle: () => void;
+  toggleHighlights: () => void;
 };
 
 type BoardState = {
+  isHighlightsEnabled: boolean;
   gameStatus: GameStatus;
   history: History;
   selectedCell?: Position;
@@ -280,6 +282,7 @@ export const useBoardState = create<BoardStore>()(
           startNumbers: sudokuGeneratorToFilledCells,
         });
       },
+      isHighlightsEnabled: true,
       isNotesModeEnabled: false,
       numbersDepleted: new Array(9).fill(0).map((value, index) => ({
         count: value,
@@ -290,9 +293,11 @@ export const useBoardState = create<BoardStore>()(
 
         const { value } = get().getCellFilled(position) ?? {};
 
-        set({
-          highlightedNumber: value,
-        });
+        if (get().isHighlightsEnabled) {
+          set({
+            highlightedNumber: value,
+          });
+        }
       },
       solution: [],
       solvePuzzle: () =>
@@ -301,6 +306,18 @@ export const useBoardState = create<BoardStore>()(
           startNumbers: [],
         }),
       startNumbers: [] as Cell[],
+      toggleHighlights: () => {
+        const isHighlightEnabled = !get().isHighlightsEnabled;
+
+        const selectedCell = get().selectedCell;
+        const highlightedNumber =
+          get().highlightedNumber || (selectedCell && get().getCellFilled(selectedCell)?.value);
+
+        set({
+          highlightedNumber: isHighlightEnabled ? highlightedNumber : undefined,
+          isHighlightsEnabled: isHighlightEnabled,
+        });
+      },
       toggleNotesMode: () => set({ isNotesModeEnabled: !get().isNotesModeEnabled }),
       undoLastMove: () => {
         const history = get().history;

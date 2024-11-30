@@ -4,6 +4,8 @@ import { GameMode, GameStatus } from '@types';
 import { Redirect, useRouter } from 'expo-router';
 import { View } from 'react-native';
 
+import { HighlightsModeSwitch } from '../src/components/HighlightsModeSwitch';
+
 export default function Home() {
   const { replace } = useRouter();
   const { initialiseBoard, checkGameStatus } = useBoardState((state) => ({
@@ -27,11 +29,13 @@ export default function Home() {
       style={{
         alignItems: 'center',
         flex: 0.95,
+        gap: 32,
         justifyContent: 'center',
         paddingHorizontal: 20,
       }}
     >
       <GameModeButtonGroup onMode={onMode} />
+      <HighlightsModeSwitch />
     </View>
   );
 }
